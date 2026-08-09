@@ -3,6 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
+
+use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\EventCategoryController;
+use App\Http\Controllers\Admin\CandidateController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +26,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+        // Sprint 2 Routes
+        Route::resource('events', EventController::class);
+        Route::resource('categories', EventCategoryController::class)->except(['show']);
+        Route::resource('candidates', CandidateController::class);
     });
 });
 
