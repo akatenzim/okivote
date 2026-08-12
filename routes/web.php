@@ -1,18 +1,22 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicController;
+
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
-
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\CandidateController;
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Public Routes (Zero Auth Wall)
+Route::get('/', [PublicController::class, 'index'])->name('home');
+Route::get('/events', [PublicController::class, 'index'])->name('public.events.index');
+Route::get('/events/{slug}', [PublicController::class, 'showEvent'])->name('public.events.show');
+Route::get('/events/{eventSlug}/candidates/{candidateSlug}', [PublicController::class, 'showCandidate'])->name('public.candidates.show');
+Route::get('/register-event', [PublicController::class, 'registerEvent'])->name('public.register-event');
 
 // Admin Routes (Tanpa Link Publik)
 Route::prefix('admin')->name('admin.')->group(function () {
