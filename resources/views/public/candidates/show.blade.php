@@ -113,6 +113,32 @@
             </div>
         </div>
     </div>
+    {{-- Supporter Feed Widget --}}
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3 text-left">
+        <h3 class="font-bold text-sm text-slate-200 border-b border-slate-800 pb-2">
+            💬 Pesan Dukungan ({{ number_format($candidateVotes) }} Vote Masuk)
+        </h3>
+
+        <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+            @forelse($supporters as $supporter)
+                <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800/80 space-y-1 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-200">
+                            {{ $supporter->is_anonymous ? 'Anonymous' : $supporter->voter_name }}
+                        </span>
+                        <span class="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                            +{{ number_format($supporter->vote_quantity) }} Vote
+                        </span>
+                    </div>
+                    @if($supporter->support_message)
+                        <p class="text-slate-400 italic">"{{ $supporter->support_message }}"</p>
+                    @endif
+                </div>
+            @empty
+                <p class="text-center py-4 text-slate-500 text-xs">Belum ada pesan dukungan. Jadilah pendukung pertama!</p>
+            @endforelse
+        </div>
+    </div>
 </div>
 
 <script>

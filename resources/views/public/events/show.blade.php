@@ -45,8 +45,20 @@
                         <h3 class="font-bold text-sm text-slate-100 line-clamp-1">{{ $candidate->name }}</h3>
                         <p class="text-[10px] text-slate-400">{{ $candidate->region ?? '-' }}</p>
                     </div>
+
+                    {{-- Tampilan Leaderboard Vote Sah --}}
+                    <div class="space-y-1 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                        <div class="flex justify-between items-center text-[10px] font-bold">
+                            <span class="text-amber-400 font-mono">{{ number_format($candidate->total_votes) }} Vote</span>
+                            <span class="text-slate-400">{{ $candidate->percentage }}%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full" style="width: {{ $candidate->percentage }}%"></div>
+                        </div>
+                    </div>
+
                     <a href="{{ route('public.candidates.show', [$event->slug, $candidate->slug]) }}"
-                       class="block w-full text-center py-2 bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 rounded-xl text-xs transition">
+                    class="block w-full text-center py-2 bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 rounded-xl text-xs transition">
                         Vote
                     </a>
                 </div>

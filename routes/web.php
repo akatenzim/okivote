@@ -13,8 +13,10 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\CandidateController;
 
+use App\Services\VoteService;
+
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request as HttpRequest;
 
 // Public Routes (Zero Auth Wall)
 Route::get('/', [PublicController::class, 'index'])->name('home');
@@ -31,10 +33,9 @@ Route::get('/checkout/{invoiceNumber}', [CheckoutController::class, 'show'])->na
 Route::post('/webhooks/payment', [PaymentWebhookController::class, 'handle'])->name('webhook.payment');
 
 // Route khusus simulasi testing webhook lokal (Direct Method Call - No Deadlock)
-// Route khusus simulasi testing webhook lokal (Direct Method Call - No Deadlock)
-Route::post('/webhooks/dummy-simulate', function (Request $request, DummyPaymentGateway $gateway) {
+Route::post('/webhooks/dummy-simulate', function (HttpRequest $request, DummyPaymentGateway $gateway, VoteService $voteService) {
     // 1. Buat Simulated Request Object dengan Signature Valid Header
-    $simulatedRequest = Request::create(
+    $simulatedRequest = HttpRequest::create(
         route('webhook.payment'),
         'POST',
         [
@@ -49,13 +50,13 @@ Route::post('/webhooks/dummy-simulate', function (Request $request, DummyPayment
         ['HTTP_X-Mock-Signature' => config('services.dummy_gateway.secret', 'okivote-secret')]
     );
 
-    // 2. Langsung panggil PaymentWebhookController secara internal
+    // 2. Panggil controller dengan menyertakan ketiga parameter
     $controller = app(PaymentWebhookController::class);
-    $response = $controller->handle($simulatedRequest, $gateway);
+    $response = $controller->handle($simulatedRequest, $gateway, $voteService);
 
     return response()->json([
         'status' => 'SUCCESS_SIMULATION',
-        'message' => 'Status pembayaran berhasil diubah menjadi PAID!',
+        'message' => 'Status pembayaran berhasil diubah menjadi PAID dan Vote Ledger telah diterbitkan!',
         'webhook_response' => json_decode($response->getContent(), true),
     ]);
 })->name('webhook.dummy');

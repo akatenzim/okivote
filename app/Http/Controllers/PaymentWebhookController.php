@@ -9,9 +9,11 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use App\Services\VoteService;
+
 class PaymentWebhookController extends Controller
 {
-    public function handle(Request $request, PaymentGatewayInterface $gateway)
+    public function handle(Request $request, PaymentGatewayInterface $gateway, VoteService $voteService)
     {
         $payload = $request->all();
         $gatewayEventId = $request->header('X-Event-ID') ?? $payload['event_id'] ?? null;
@@ -66,28 +68,25 @@ class PaymentWebhookController extends Controller
         // 5. PROCESS PAYMENT STATUS UPDATE
         $mappedStatus = $gateway->mapPaymentStatus($payload['status'] ?? 'FAILED');
 
-        DB::transaction(function () use ($transaction, $mappedStatus, $payload, $webhook) {
-            // Lock Transaction Row
+        DB::transaction(function () use ($transaction, $mappedStatus, $payload, $webhook, $voteService) {
             $transaction = Transaction::query()
                 ->where('id', '=', $transaction->id)
                 ->lockForUpdate()
                 ->first();
 
-            // Hanya proses jika transaksi masih PENDING
             if ($transaction->status === 'PENDING' && $mappedStatus === 'PAID') {
                 $transaction->update([
                     'status' => 'PAID',
                     'paid_at' => now(),
                 ]);
 
-                Payment::query()
-                    ->where('transaction_id', '=', $transaction->id)
-                    ->update([
-                        'status' => 'PAID',
-                        'paid_at' => now(),
-                    ]);
+                $transaction->payments()->update([
+                    'status' => 'PAID',
+                    'paid_at' => now(),
+                ]);
 
-                // Vote Ledger issuance akan dipicu di Sprint 5!
+                // PANGGIL VOTE SERVICE UNTUK MENERBITKAN VOTE LEDGER!
+                $voteService->issueVoteFromTransaction($transaction);
             }
 
             $webhook->update([
@@ -96,6 +95,6 @@ class PaymentWebhookController extends Controller
             ]);
         });
 
-        return response()->json(['message' => 'Webhook processed successfully']);
+        return response()->json(['message' => 'Webhook processed and vote issued successfully']);
     }
 }
