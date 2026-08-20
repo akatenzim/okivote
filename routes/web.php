@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\SettlementController;
+use App\Http\Controllers\Admin\AuditLogController;
 
 use App\Services\VoteService;
 
@@ -86,6 +87,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/settlements', [SettlementController::class, 'index'])->name('settlements.index');
         Route::get('/settlements/create', [SettlementController::class, 'create'])->name('settlements.create');
         Route::post('/settlements', [SettlementController::class, 'store'])->name('settlements.store');
+
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
     });
 });
 
