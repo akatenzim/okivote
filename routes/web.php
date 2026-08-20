@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\CandidateController;
+use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\SettlementController;
 
 use App\Services\VoteService;
 
@@ -78,6 +80,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('events', EventController::class);
         Route::resource('categories', EventCategoryController::class)->except(['show']);
         Route::resource('candidates', CandidateController::class);
+
+        // Sprint 6 Routes
+        Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+        Route::get('/settlements', [SettlementController::class, 'index'])->name('settlements.index');
+        Route::get('/settlements/create', [SettlementController::class, 'create'])->name('settlements.create');
+        Route::post('/settlements', [SettlementController::class, 'store'])->name('settlements.store');
     });
 });
 

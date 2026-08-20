@@ -1,27 +1,7 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Event - OkiVote Admin</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
-    <nav class="border-b border-slate-800 bg-slate-950 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-6">
-            <span class="font-bold text-lg text-amber-500">OkiVote Admin</span>
-            <a href="{{ route('admin.dashboard') }}" class="text-sm text-slate-400 hover:text-slate-200">Dashboard</a>
-            <a href="{{ route('admin.events.index') }}" class="text-sm text-amber-500 font-semibold">Events</a>
-            <a href="{{ route('admin.candidates.index') }}" class="text-sm text-slate-400 hover:text-slate-200">Candidates</a>
-        </div>
-        <form action="{{ route('admin.logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="text-sm bg-red-500/20 text-red-400 px-3 py-1.5 rounded-md hover:bg-red-500/30">Logout</button>
-        </form>
-    </nav>
+@extends('layouts.admin')
 
-    <main class="p-6 max-w-7xl mx-auto space-y-6">
-        <div class="flex justify-between items-center">
+@section('content')
+    <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold">Daftar Event Voting</h1>
                 <p class="text-sm text-slate-400">Kelola periode, harga vote, dan status event</p>
@@ -87,6 +67,4 @@
                 {{ $events->links() }}
             </div>
         </div>
-    </main>
-</body>
-</html>
+@endsection

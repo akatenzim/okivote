@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Kandidat - OkiVote Admin</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
-    <main class="p-6 max-w-4xl mx-auto my-8">
+@extends('layouts.admin')
+
+@section('content')
         <div class="mb-6 flex justify-between items-center">
             <h1 class="text-2xl font-bold">Input Kandidat Baru</h1>
             <a href="{{ route('admin.candidates.index') }}" class="text-sm text-slate-400 hover:text-slate-200">← Kembali</a>
@@ -80,6 +73,4 @@
                 <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg text-sm">Simpan Kandidat</button>
             </div>
         </form>
-    </main>
-</body>
-</html>
+@endsection

@@ -1,30 +1,62 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - OkiVote</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
-    <nav class="border-b border-slate-800 bg-slate-950 px-6 py-4 flex items-center justify-between">
-        <span class="font-bold text-lg text-amber-500">OkiVote Admin Panel</span>
-        <div class="flex items-center gap-4">
-            <span class="text-sm text-slate-400">{{ Auth::guard('admin')->user()->name }}</span>
-            <form action="{{ route('admin.logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="text-sm bg-red-500/20 text-red-400 px-3 py-1.5 rounded-md hover:bg-red-500/30 transition">
-                    Logout
-                </button>
-            </form>
-        </div>
-    </nav>
+@extends('layouts.admin')
 
-    <main class="p-6 max-w-7xl mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Dashboard Overview</h1>
-        <div class="p-4 bg-slate-800 border border-slate-700 rounded-lg">
-            <p class="text-slate-300">Selamat datang di Admin Panel OkiVote. Modul Event & Kandidat siap dikembangkan di Sprint berikutnya!</p>
+@section('content')
+    <h1 class="text-2xl font-bold">Ringkasan Performa Platform</h1>
+
+    {{-- Metrics Cards --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-4 bg-slate-800 border border-slate-700 rounded-xl space-y-1">
+            <span class="text-xs text-slate-400">Total GMV (Bruto)</span>
+            <div class="text-xl font-bold text-amber-400 font-mono">Rp {{ number_format($totalGmv, 0, ',', '.') }}</div>
         </div>
-    </main>
-</body>
-</html>
+        <div class="p-4 bg-slate-800 border border-slate-700 rounded-xl space-y-1">
+            <span class="text-xs text-slate-400">Total Suara Valid</span>
+            <div class="text-xl font-bold text-slate-100 font-mono">{{ number_format($totalValidVotes) }} Vote</div>
+        </div>
+        <div class="p-4 bg-slate-800 border border-slate-700 rounded-xl space-y-1">
+            <span class="text-xs text-slate-400">GMV Hari Ini</span>
+            <div class="text-xl font-bold text-emerald-400 font-mono">Rp {{ number_format($gmvToday, 0, ',', '.') }}</div>
+        </div>
+        <div class="p-4 bg-slate-800 border border-slate-700 rounded-xl space-y-1">
+            <span class="text-xs text-slate-400">Event Aktif</span>
+            <div class="text-xl font-bold text-slate-100 font-mono">{{ $activeEvents }} / {{ $totalEvents }} Event</div>
+        </div>
+    </div>
+
+    {{-- Tabel Transaksi Terbaru --}}
+    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden space-y-3 p-4">
+        <h2 class="font-bold text-slate-200 text-sm">Transaksi Terbaru</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-950 text-slate-400 uppercase">
+                    <tr>
+                        <th class="p-3">Invoice</th>
+                        <th class="p-3">Voter</th>
+                        <th class="p-3">Kandidat</th>
+                        <th class="p-3">Vote</th>
+                        <th class="p-3">Total</th>
+                        <th class="p-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700">
+                    @forelse($recentTransactions as $tx)
+                        <tr>
+                            <td class="p-3 font-mono text-amber-400">{{ $tx->invoice_number }}</td>
+                            <td class="p-3">{{ $tx->voter_name }} ({{ $tx->voter_phone }})</td>
+                            <td class="p-3">{{ $tx->candidate->name }}</td>
+                            <td class="p-3 font-mono font-bold">+{{ number_format($tx->vote_quantity) }}</td>
+                            <td class="p-3 font-mono">Rp {{ number_format($tx->grand_total, 0, ',', '.') }}</td>
+                            <td class="p-3">
+                                <span class="px-2 py-0.5 rounded font-bold {{ $tx->status == 'PAID' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400' }}">
+                                    {{ $tx->status }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="6" class="p-4 text-center text-slate-500">Belum ada transaksi.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+@endsection

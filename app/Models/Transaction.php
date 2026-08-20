@@ -63,4 +63,9 @@ class Transaction extends Model
     {
         return $this->hasOne(VoteLedger::class);
     }
+
+    public function settlementItem(): HasOne
+    {
+        return $this->hasOne(SettlementItem::class);
+    }
 }
