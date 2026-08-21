@@ -1,58 +1,105 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+  # ⚡ OkiVote — Digital Voting Platform
 
-## About Laravel
+  **Platform Perhitungan Suara & Voting Digital Real-Time yang Aman, Transparan, dan Berkinerja Tinggi.**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+</div>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📌 Tentang OkiVote
 
-## Learning Laravel
+**OkiVote** adalah platform voting dan kompetisi digital berbasis web yang dirancang khusus untuk mendukung penyelenggaraan ajang pemilihan, pageant, talent show, dan penghargaan (*awards*). Mengusung bahasa desain **Editorial Warm Elegance**, OkiVote menyajikan pengalaman pengguna yang intuitif, responsif, dan interaktif di berbagai ukuran layar.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Dibangun di atas **Laravel 11**, arsitektur sistem ini mengutamakan **keamanan data, integritas transaksi, dan efisiensi biaya operasional** (menggunakan skema *Pay-As-You-Use* tanpa beban bulanan).
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## ✨ Fitur Unggulan
 
-## Agentic Development
+### 🌐 Sisi Publik (Voter & Pendukung)
+* **Editorial Event Directory:** Katalog kompetisi interaktif dengan tab filter status (`Sedang Berlangsung`, `Akan Datang`, `Selesai`).
+* **Optional Voter Identity:** Mendukung pemilih anonim (*Anonymous*) untuk privasi voter yang lebih fleksibel.
+* **Live Vote Toast Notifications:** Widget notifikasi melayang interaktif yang menampilkan 10 transaksi *real-time* terbaru per event.
+* **Leaderboard & Vote Ledger:** Perhitungan persentase dan total dukungan yang transparan serta terverifikasi secara presisi.
+* **Social Sharing Integration:** Fitur bagikan link profil kandidat langsung ke WhatsApp/Clipboard dengan metadata OpenGraph dinamis.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 🛡️ Sisi Admin (Penyelenggara & Keamanan)
+* **Audit Trail & Security Logs:** Pencatatan otomatis setiap tindakan sensitif admin (perubahan harga vote, status event, perubahan kredensial, IP address).
+* **Event Pause / Suspend Mechanism:** Kemampuan mengunci sesi voting secara instan tanpa menyembunyikan halaman event dari publik.
+* **Admin Profile Management:** Pengelolaan profil mandiri untuk memperbarui alamat email dan kata sandi secara aman.
+* **Payment Gateway Ready:** Terintegrasi dengan saluran pembayaran QRIS dan Virtual Account.
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
-```
+## 🛠️ Stack Teknologi
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+* **Backend Framework:** Laravel 11 (PHP 8.2+)
+* **Frontend Framework:** Blade, Tailwind CSS, Alpine.js (Vite)
+* **Database:** MySQL / MariaDB (disertai arsitektur *Vote Ledger* & *Transaction Handling*)
+* **Security & Auth:** Custom Guard, Form Request Validation, Audit Log Service
+* **Payment Integration Strategy:** Midtrans / Xendit (Skema tanpa biaya langganan / *zero setup fee*)
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🚀 Panduan Instalasi Lokal
 
-## Code of Conduct
+Ikuti langkah-langkah berikut untuk menjalankan OkiVote di lingkungan pengembangan lokal (*local environment*):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Clone Repositori**
+   git clone https://github.com/username/okivote.git
+   cd okivote
 
-## Security Vulnerabilities
+2. **Install Dependensi PHP & JavaScript**
+   composer install
+   npm install
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. **Konfigurasi Environment (.env)**
+   Salin file konfigurasi `.env.example` menjadi `.env`:
+   cp .env.example .env
 
-## License
+   Sesuaikan konfigurasi database dan timezone pada file `.env`:
+   APP_NAME=OkiVote
+   APP_TIMEZONE=Asia/Jakarta
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=okivote_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+
+4. **Generate Application Key & Migrasi Database**
+   php artisan key:generate
+   php artisan migrate --seed
+
+5. **Buat Storage Symlink**
+   php artisan storage:link
+
+6. **Jalankan Development Server**
+   Terminal 1 (Laravel Server):
+   php artisan serve
+
+   Terminal 2 (Asset Bundler):
+   npm run dev
+
+Buka browser dan akses platform melalui http://localhost:8000.
+
+---
+
+## 📄 Commit Conventions
+
+Proyek ini menerapkan standar Conventional Commits:
+
+* `feat(...)`: Penambahan fitur baru.
+* `fix(...)`: Perbaikan bug atau penanganan eror.
+* `style(...)`: Penyesuaian antarmuka/UI, CSS, atau refactor tampilan.
+* `refactor(...)`: Perapihan struktur kode tanpa mengubah fungsionalitas.
+* `docs(...)`: Perubahan dokumentasi proyek.
+
+---
+
+## ⚖️ Lisensi
+
+Sistem ini dirilis di bawah Lisensi MIT. Bebas untuk dikembangkan dan disesuaikan untuk kebutuhan komersial maupun non-komersial.
