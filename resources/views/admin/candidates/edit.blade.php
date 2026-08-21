@@ -5,8 +5,8 @@
     {{-- Header & Navigasi Kembali --}}
     <div class="flex items-center justify-between border-b border-[#EBE7DF] pb-4">
         <div class="space-y-1">
-            <span class="text-[10px] font-bold tracking-widest text-[#C85A32] uppercase">Form Pendaftaran</span>
-            <h1 class="text-2xl font-extrabold text-[#1A1D1A] tracking-tight">Input Kandidat Baru</h1>
+            <span class="text-[10px] font-bold tracking-widest text-[#C85A32] uppercase">Manajemen Entitas</span>
+            <h1 class="text-2xl font-extrabold text-[#1A1D1A] tracking-tight">Edit Kandidat: {{ $candidate->name }}</h1>
         </div>
         <a href="{{ route('admin.candidates.index') }}"
            class="text-xs font-bold text-[#78756E] hover:text-[#1A1D1A] bg-white border border-[#EBE7DF] px-3.5 py-2 rounded-lg transition-colors">
@@ -26,12 +26,13 @@
         </div>
     @endif
 
-    {{-- Form Create Candidate --}}
-    <form action="{{ route('admin.candidates.store') }}" method="POST" enctype="multipart/form-data"
+    {{-- Form Edit Candidate --}}
+    <form action="{{ route('admin.candidates.update', $candidate->id) }}" method="POST" enctype="multipart/form-data"
           class="bg-white border border-[#EBE7DF] rounded-xl p-6 sm:p-8 space-y-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
         @csrf
+        @method('PUT')
 
-        {{-- Section 1: Relasi Event & Nomor Urut --}}
+        {{-- Section 1: Event & Nomor Urut --}}
         <div class="space-y-4">
             <h2 class="text-xs font-extrabold tracking-wider uppercase text-[#C85A32] border-b border-[#F4F1EA] pb-2">
                 1. Penempatan Event & Urutan
@@ -42,9 +43,8 @@
                     <label class="block text-xs font-bold text-[#1A1D1A]">Pilih Event *</label>
                     <select name="event_id" required
                             class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] font-bold focus:outline-none focus:border-[#1A1D1A]">
-                        <option value="">-- Pilih Event --</option>
                         @foreach ($events as $event)
-                            <option value="{{ $event->id }}" {{ old('event_id', $selectedEventId) == $event->id ? 'selected' : '' }}>
+                            <option value="{{ $event->id }}" {{ old('event_id', $candidate->event_id) == $event->id ? 'selected' : '' }}>
                                 {{ $event->name }}
                             </option>
                         @endforeach
@@ -53,45 +53,46 @@
 
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-[#1A1D1A]">Nomor Urut Kandidat *</label>
-                    <input type="text" name="candidate_number" value="{{ old('candidate_number') }}" required
+                    <input type="text" name="candidate_number" value="{{ old('candidate_number', $candidate->candidate_number) }}" required
                            placeholder="Contoh: 01"
                            class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] font-mono font-extrabold focus:outline-none focus:border-[#1A1D1A]">
                 </div>
             </div>
         </div>
 
-        {{-- Section 2: Data Diri Kandidat --}}
+        {{-- Section 2: Profil & Status --}}
         <div class="space-y-4">
             <h2 class="text-xs font-extrabold tracking-wider uppercase text-[#C85A32] border-b border-[#F4F1EA] pb-2">
-                2. Profil & Identitas Peserta
+                2. Profil & Status Keaktifan
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-[#1A1D1A]">Nama Lengkap Kandidat *</label>
-                    <input type="text" name="name" value="{{ old('name') }}" required
+                    <input type="text" name="name" value="{{ old('name', $candidate->name) }}" required
                            placeholder="Nama lengkap kandidat"
                            class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]">
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-[#1A1D1A]">Asal / Region (Opsional)</label>
-                    <input type="text" name="region" value="{{ old('region') }}"
+                    <input type="text" name="region" value="{{ old('region', $candidate->region) }}"
                            placeholder="Contoh: Bandar Lampung"
                            class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]">
                 </div>
 
                 <div class="space-y-1">
-                    <label class="block text-xs font-bold text-[#1A1D1A]">Foto Profil Kandidat *</label>
-                    <input type="file" name="profile_photo" required accept="image/*"
-                           class="w-full px-3 py-2 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#78756E] focus:outline-none">
+                    <label class="block text-xs font-bold text-[#1A1D1A]">Status Aktif Kandidat *</label>
+                    <select name="is_active" class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] font-bold focus:outline-none focus:border-[#1A1D1A]">
+                        <option value="1" {{ old('is_active', $candidate->is_active) ? 'selected' : '' }}>AKTIF</option>
+                        <option value="0" {{ !old('is_active', $candidate->is_active) ? 'selected' : '' }}>NON-AKTIF</option>
+                    </select>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="block text-xs font-bold text-[#1A1D1A]">URL Media Sosial (Opsional)</label>
-                    <input type="url" name="social_media_url" value="{{ old('social_media_url') }}"
-                           placeholder="https://instagram.com/username"
-                           class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]">
+                    <label class="block text-xs font-bold text-[#1A1D1A]">Ganti Foto Profil (Opsional)</label>
+                    <input type="file" name="profile_photo" accept="image/*"
+                           class="w-full px-3 py-2 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#78756E] focus:outline-none">
                 </div>
             </div>
         </div>
@@ -101,7 +102,7 @@
             <label class="block text-xs font-bold text-[#1A1D1A]">Biografi / Deskripsi Singkat</label>
             <textarea name="biography" rows="3"
                       placeholder="Tuliskan latar belakang, prestasi, atau jargon kandidat..."
-                      class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]">{{ old('biography') }}</textarea>
+                      class="w-full px-3.5 py-2.5 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]">{{ old('biography', $candidate->biography) }}</textarea>
         </div>
 
         {{-- Action Buttons --}}
@@ -112,7 +113,7 @@
             </a>
             <button type="submit"
                     class="px-5 py-2.5 bg-[#1A1D1A] hover:bg-[#C85A32] text-[#FBF9F5] font-bold text-xs rounded-lg transition-colors duration-200 shadow-sm">
-                Simpan Kandidat
+                Perbarui Kandidat
             </button>
         </div>
     </form>

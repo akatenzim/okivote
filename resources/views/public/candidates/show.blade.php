@@ -1,6 +1,6 @@
 @extends('public.layout')
 
-@section('title', "Vote {$candidate->name} - {$event->name}")
+@section('title', "Vote {$candidate->name} — {$event->name}")
 
 @section('og_meta')
     <meta property="og:title" content="{{ $ogData['title'] }}" />
@@ -11,49 +11,58 @@
 @endsection
 
 @section('content')
-<div class="space-y-6">
-    <a href="{{ route('public.events.show', $event->slug) }}" class="text-xs text-slate-400 hover:text-amber-400 inline-block mb-2">
+<div class="space-y-7">
+    {{-- Back Link --}}
+    <a href="{{ route('public.events.show', $event->slug) }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#78756E] hover:text-[#1A1D1A] transition-colors">
         ← Kembali ke {{ $event->name }}
     </a>
 
-    {{-- Card Profil --}}
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-4 text-center">
-        <div class="relative w-36 h-48 mx-auto rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-xl">
+    {{-- Card Profil Utama --}}
+    <div class="bg-white border border-[#EBE7DF] rounded-xl p-5 space-y-5 text-center shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+
+        {{-- Profile Photo with Editorial Badge --}}
+        <div class="relative w-40 h-52 mx-auto rounded-lg overflow-hidden bg-[#EFECE6] border border-[#EBE7DF] shadow-md">
             <img src="{{ asset('storage/' . $candidate->profile_photo_path) }}" class="w-full h-full object-cover">
-            <div class="absolute top-2 left-2 bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-lg shadow">
+            <div class="absolute top-2.5 left-2.5 bg-[#1A1D1A]/90 backdrop-blur-md text-[#FBF9F5] font-extrabold text-[11px] px-2.5 py-0.5 rounded border border-white/10 font-mono">
                 #{{ $candidate->candidate_number }}
             </div>
         </div>
 
-        <div>
-            <h1 class="text-xl font-black text-slate-100">{{ $candidate->name }}</h1>
-            <p class="text-xs text-amber-400 font-medium">{{ $candidate->region ?? 'Peserta ' . $event->name }}</p>
+        {{-- Name & Region --}}
+        <div class="space-y-1">
+            <h1 class="text-2xl font-extrabold text-[#1A1D1A] tracking-tight leading-snug">{{ $candidate->name }}</h1>
+            <p class="text-xs font-bold text-[#C85A32] uppercase tracking-wider">{{ $candidate->region ?? 'Peserta ' . $event->name }}</p>
         </div>
 
+        {{-- Biography --}}
         @if($candidate->biography)
-            <p class="text-xs text-slate-400 leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+            <p class="text-xs text-[#78756E] leading-relaxed bg-[#FBF9F5] p-3.5 rounded-lg border border-[#EBE7DF] text-left">
                 {{ $candidate->biography }}
             </p>
         @endif
 
-        {{-- Modal Checkout Wrapper --}}
-        <div x-data="{ open: false, qty: 10, price: {{ $event->vote_price }} }" x-cloak class="space-y-2 pt-2">
+        {{-- Action & Checkout Modal Wrapper --}}
+        <div x-data="{ open: false, qty: 10, price: {{ $event->vote_price }} }" x-cloak class="space-y-2.5 pt-2">
 
-            {{-- Tombol Utama yang membuka Modal --}}
-            <button @click="open = true" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-2xl text-sm shadow-lg transition">
+            <button @click="open = true" class="w-full py-3 bg-[#1A1D1A] hover:bg-[#C85A32] text-[#FBF9F5] font-bold rounded-lg text-xs tracking-wide transition-colors duration-200 shadow-sm">
                 ⚡ VOTE SEKARANG
             </button>
 
-            <button onclick="shareLink()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-2xl text-xs border border-slate-700 transition">
-                📲 Bagikan Profil (WhatsApp/Copy)
+            <button onclick="shareLink()" class="w-full py-2.5 bg-[#FBF9F5] hover:bg-[#EFECE6] text-[#1A1D1A] font-bold rounded-lg text-xs border border-[#EBE7DF] transition-colors duration-200">
+                📲 Bagikan Profil (WhatsApp / Salin Link)
             </button>
 
-            {{-- Overlay & Form Modal Checkout --}}
-            <div x-show="open" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-                <div @click.away="open = false" class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4 max-h-[90vh] overflow-y-auto text-left">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <h3 class="font-bold text-slate-100">Vote {{ $candidate->name }}</h3>
-                        <button @click="open = false" class="text-slate-400 hover:text-slate-200">✕</button>
+            {{-- Modal Overlay & Slide-up Form --}}
+            <div x-show="open" class="fixed inset-0 z-50 bg-[#1A1D1A]/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+                <div @click.away="open = false" class="bg-white border border-[#EBE7DF] w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto text-left shadow-2xl">
+
+                    {{-- Modal Header --}}
+                    <div class="flex justify-between items-center border-b border-[#EBE7DF] pb-3">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] font-bold text-[#C85A32] uppercase">Form Dukungan</span>
+                            <h3 class="font-extrabold text-base text-[#1A1D1A]">Vote {{ $candidate->name }}</h3>
+                        </div>
+                        <button @click="open = false" class="text-[#78756E] hover:text-[#1A1D1A] font-bold text-lg p-1">✕</button>
                     </div>
 
                     <form action="{{ route('public.checkout.store') }}" method="POST" class="space-y-4">
@@ -61,37 +70,44 @@
                         <input type="hidden" name="candidate_id" value="{{ $candidate->id }}">
 
                         {{-- Preset Vote Quantity --}}
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-2">Pilih Jumlah Vote</label>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-[#1A1D1A]">Pilih Paket Vote *</label>
                             <div class="grid grid-cols-3 gap-2 text-xs">
                                 <template x-for="preset in [10, 25, 50, 100, 250, 500]">
                                     <button type="button" @click="qty = preset"
-                                            :class="qty == preset ? 'bg-amber-500 text-slate-950 font-bold border-amber-500' : 'bg-slate-950 text-slate-300 border-slate-800'"
-                                            class="py-2 rounded-xl border text-center transition">
+                                            :class="qty == preset ? 'bg-[#1A1D1A] text-[#FBF9F5] font-bold border-[#1A1D1A]' : 'bg-[#FBF9F5] text-[#78756E] border-[#EBE7DF] hover:bg-[#EFECE6]'"
+                                            class="py-2 rounded-lg border text-center transition-all font-mono">
                                         <span x-text="preset"></span> Vote
                                     </button>
                                 </template>
                             </div>
-                            <input type="number" name="vote_quantity" x-model="qty" required min="1" class="mt-2 w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-amber-400 font-mono font-bold">
+                            <input type="number" name="vote_quantity" x-model="qty" required min="1"
+                                   class="w-full px-3 py-2 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] font-mono font-extrabold focus:outline-none focus:border-[#1A1D1A]">
                         </div>
 
-                        {{-- Form Identitas Voter --}}
+                        {{-- Form Input Identitas Voter --}}
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Nama Lengkap *</label>
-                                <input type="text" name="voter_name" required placeholder="Nama Anda" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100">
+                                <label class="block text-xs font-bold text-[#1A1D1A] mb-1">Nama Lengkap *</label>
+                                <input type="text" name="voter_name" required placeholder="Nama Anda"
+                                       class="w-full px-3 py-2 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]">
                             </div>
+
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">No. WhatsApp *</label>
-                                <input type="tel" name="voter_phone" required placeholder="081234567890" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100">
+                                <label class="block text-xs font-bold text-[#1A1D1A] mb-1">No. WhatsApp *</label>
+                                <input type="tel" name="voter_phone" required placeholder="081234567890"
+                                       class="w-full px-3 py-2 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]">
                             </div>
+
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Pesan Dukungan (Opsional)</label>
-                                <textarea name="support_message" rows="2" placeholder="Semangat menuju crown!" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100"></textarea>
+                                <label class="block text-xs font-bold text-[#1A1D1A] mb-1">Pesan Dukungan (Opsional)</label>
+                                <textarea name="support_message" rows="2" placeholder="Semangat menuju crown!"
+                                          class="w-full px-3 py-2 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] focus:outline-none focus:border-[#1A1D1A]"></textarea>
                             </div>
+
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">Metode Pembayaran</label>
-                                <select name="payment_method" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-amber-400 font-semibold">
+                                <label class="block text-xs font-bold text-[#1A1D1A] mb-1">Metode Pembayaran</label>
+                                <select name="payment_method" class="w-full px-3 py-2 bg-[#FBF9F5] border border-[#EBE7DF] rounded-lg text-xs text-[#1A1D1A] font-bold focus:outline-none focus:border-[#1A1D1A]">
                                     <option value="QRIS">QRIS (GoPay, OVO, ShopeePay, BCA)</option>
                                     <option value="VA_BCA">Virtual Account BCA</option>
                                     <option value="VA_MANDIRI">Virtual Account Mandiri</option>
@@ -99,13 +115,13 @@
                             </div>
                         </div>
 
-                        {{-- Total Ringkasan --}}
-                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-400">Total Pembayaran:</span>
-                            <span class="font-bold text-amber-400 text-sm font-mono" x-text="'Rp ' + (qty * price).toLocaleString('id-ID')"></span>
+                        {{-- Total Ringkasan Tagihan --}}
+                        <div class="p-3.5 bg-[#FBF9F5] rounded-lg border border-[#EBE7DF] flex justify-between items-center text-xs">
+                            <span class="text-[#78756E] font-medium">Total Pembayaran:</span>
+                            <span class="font-extrabold text-[#C85A32] text-sm font-mono" x-text="'Rp ' + (qty * price).toLocaleString('id-ID')"></span>
                         </div>
 
-                        <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs shadow-lg transition">
+                        <button type="submit" class="w-full py-3 bg-[#1A1D1A] hover:bg-[#C85A32] text-[#FBF9F5] font-bold rounded-lg text-xs transition-colors duration-200">
                             Lanjut ke Pembayaran →
                         </button>
                     </form>
@@ -113,29 +129,38 @@
             </div>
         </div>
     </div>
-    {{-- Supporter Feed Widget --}}
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-3 text-left">
-        <h3 class="font-bold text-sm text-slate-200 border-b border-slate-800 pb-2">
-            💬 Pesan Dukungan ({{ number_format($candidateVotes) }} Vote Masuk)
-        </h3>
 
-        <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+    {{-- Supporter Feed Widget --}}
+    <div class="bg-white border border-[#EBE7DF] rounded-xl p-5 space-y-4 text-left shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+        <div class="border-b border-[#EBE7DF] pb-3 flex justify-between items-center">
+            <h3 class="font-extrabold text-sm text-[#1A1D1A]">
+                💬 Pesan Dukungan
+            </h3>
+            <span class="text-[10px] font-extrabold font-mono text-[#C85A32] bg-[#FBF9F5] border border-[#EBE7DF] px-2.5 py-1 rounded-md">
+                {{ number_format($candidateVotes) }} Vote Masuk
+            </span>
+        </div>
+
+        <div class="space-y-3 max-h-64 overflow-y-auto pr-1 no-scrollbar">
             @forelse($supporters as $supporter)
-                <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800/80 space-y-1 text-xs">
+                <div class="p-3.5 bg-[#FBF9F5] rounded-lg border border-[#EBE7DF] space-y-1.5 text-xs">
                     <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-200">
-                            {{ $supporter->is_anonymous ? 'Anonymous' : $supporter->voter_name }}
+                        <span class="font-extrabold text-[#1A1D1A]">
+                            {{ $supporter->is_anonymous ? 'Anonymous Supporter' : $supporter->voter_name }}
                         </span>
-                        <span class="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                        <span class="text-[10px] font-mono font-extrabold text-[#1A1D1A] bg-white border border-[#EBE7DF] px-2 py-0.5 rounded">
                             +{{ number_format($supporter->vote_quantity) }} Vote
                         </span>
                     </div>
                     @if($supporter->support_message)
-                        <p class="text-slate-400 italic">"{{ $supporter->support_message }}"</p>
+                        <p class="text-[#78756E] italic text-[11px] leading-relaxed">"{{ $supporter->support_message }}"</p>
                     @endif
                 </div>
             @empty
-                <p class="text-center py-4 text-slate-500 text-xs">Belum ada pesan dukungan. Jadilah pendukung pertama!</p>
+                <div class="text-center py-6 text-[#78756E] text-xs space-y-1">
+                    <p class="font-bold text-[#1A1D1A]">Belum Ada Pesan</p>
+                    <p>Jadilah pendukung pertama yang memberikan suara!</p>
+                </div>
             @endforelse
         </div>
     </div>
@@ -154,6 +179,5 @@
             alert('Link profil kandidat berhasil disalin!');
         }
     }
-
 </script>
 @endsection
