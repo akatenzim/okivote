@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Candidate;
 use App\Models\Event;
-use App\Models\VoteLedger;
 use App\Models\Transaction;
+use App\Models\VoteLedger;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -15,14 +15,17 @@ class PublicController extends Controller
     {
         $status = $request->get('status', 'ONGOING');
 
-        $query = Event::where('status', '!=', 'DRAFT')
-            ->whereNotNull('published_at');
+        $query = Event::where('status', '!=', 'DRAFT');
 
-        if (in_array($status, ['ONGOING', 'COMING_SOON', 'FINISHED'])) {
+        // Pengecekan status yang valid, termasuk SUSPENDED
+        if ($status === 'ONGOING') {
+            // Tampilkan event yang ONGOING maupun SUSPENDED di bawah tab Berlangsung
+            $query->whereIn('status', ['ONGOING', 'SUSPENDED']);
+        } elseif (in_array($status, ['COMING_SOON', 'FINISHED', 'SUSPENDED'])) {
             $query->where('status', $status);
         }
 
-        $events = $query->latest('published_at')->paginate(9);
+        $events = $query->latest('updated_at')->paginate(9);
 
         return view('public.index', compact('events', 'status'));
     }
@@ -40,7 +43,7 @@ class PublicController extends Controller
 
         $selectedCategory = $request->get('category');
 
-        // Kalkulasi Total Vote Valid Seluruh Event dari Vote Ledger
+        // Total Vote Valid Seluruh Event dari Vote Ledger
         $totalEventVotes = (int) VoteLedger::query()
             ->where('event_id', '=', $event->id)
             ->sum('vote_amount');
@@ -62,9 +65,31 @@ class PublicController extends Controller
 
                 return $candidate;
             })
-            ->sortByDesc('total_votes'); // Urutkan Leaderboard berdasarkan Vote Terbanyak!
+            ->sortByDesc('total_votes');
 
-        return view('public.events.show', compact('event', 'candidates', 'selectedCategory', 'totalEventVotes'));
+        // ⚡ Ambil 10 transaksi vote PAID terbaru khusus event ini untuk Toast Notifikasi
+        $recentVotes = Transaction::query()
+            ->where('event_id', '=', $event->id)
+            ->where('status', '=', 'PAID')
+            ->with('candidate:id,name')
+            ->latest('paid_at')
+            ->take(10)
+            ->get(['voter_name', 'is_anonymous', 'candidate_id', 'vote_quantity', 'paid_at'])
+            ->map(function ($tx) {
+                return [
+                    'voter' => ($tx->is_anonymous || $tx->voter_name === 'Anonymous') ? 'Someone' : $tx->voter_name,
+                    'candidate' => $tx->candidate->name ?? 'Kandidat',
+                    'qty' => number_format($tx->vote_quantity),
+                ];
+            });
+
+        return view('public.events.show', compact(
+            'event',
+            'candidates',
+            'selectedCategory',
+            'totalEventVotes',
+            'recentVotes'
+        ));
     }
 
     // Detail Kandidat + Metadata OpenGraph
